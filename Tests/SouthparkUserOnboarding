@@ -1,0 +1,571 @@
+{
+	"info": {
+		"_postman_id": "85d1cacc-6987-49e8-be2e-e352cfe6e5b5",
+		"name": "SouthParkUserOnboarding",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1_User Registration",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "eca60495-9cd7-4d1f-84d3-af6f22eb8576",
+						"type": "text/javascript",
+						"exec": [
+							"postman.clearEnvironmentVariable(\"variable_key\");",
+							"",
+							"postman.clearGlobalVariable(\"variable_key\");"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "5e926a05-1c99-4a92-a660-650214b7cfa2",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"token\");",
+							"});",
+							"",
+							"pm.test(\"Validate the status\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.user.register&api_key={{api_key}}&email={{email}}&password={{password}}&device_token=kid-token&pin=1236",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.user.register"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}"
+						},
+						{
+							"key": "device_token",
+							"value": "kid-token"
+						},
+						{
+							"key": "pin",
+							"value": "1236",
+							"description": "Optional, if kid signup"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2_Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "22465d56-bd8b-42c7-9c4a-65fdaa2c03fa",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable('auth_token',jsonData.result.token)",
+							"postman.setEnvironmentVariable('username',jsonData.result.username)",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"token\");",
+							"});",
+							"",
+							"pm.test(\"Validate the status\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.auth.login&email={{email}}&password={{password}}&api_key={{api_key}}&device_token=kid-token",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.auth.login"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "device_token",
+							"value": "kid-token",
+							"description": "FCM token of the device"
+						},
+						{
+							"key": "activate_account",
+							"value": "1",
+							"description": "Optional. send 1 if users want to activate their account",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3_Invite Partner notification- elgg_repo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "fe145b31-d419-4c84-9803-e9a404d357f2",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"Invitation Sent\");",
+							"});",
+							"",
+							"pm.test(\"Validate the status\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result.success).to.eql(true);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.invitepartner.notification&api_key={{api_key}}&auth_token={{auth_token}}&email={{pemail}}&message=Hi, I'd like to connect with you via SmoresUp&linkurl=http://google.com/changes?method=sp.invitepartner.notification&api_key={{api_key}}&auth_token={{auth_token}}&email={{pemail}}&message=Hi, I'd like to connect with you via SmoresUp&linkurl=http://google.com/changes?method=sp.invitepartner.notification&name=partner1",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.invitepartner.notification"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{auth_token}}"
+						},
+						{
+							"key": "email",
+							"value": "{{pemail}}"
+						},
+						{
+							"key": "message",
+							"value": "Hi, I'd like to connect with you via SmoresUp"
+						},
+						{
+							"key": "linkurl",
+							"value": "http://google.com/changes?method=sp.invitepartner.notification"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{auth_token}}"
+						},
+						{
+							"key": "email",
+							"value": "{{pemail}}"
+						},
+						{
+							"key": "message",
+							"value": "Hi, I'd like to connect with you via SmoresUp"
+						},
+						{
+							"key": "linkurl",
+							"value": "http://google.com/changes?method=sp.invitepartner.notification"
+						},
+						{
+							"key": "name",
+							"value": "partner1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4_Get Family",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d37059b1-7764-4eb7-b9e3-ae5f21cf8dac",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable('fguid',jsonData.result.guid)",
+							"postman.setEnvironmentVariable('pguid',jsonData.result.members[0].guid)",
+							"//var partneremail = jsonData.result.invited_partner",
+							"let pemail = pm.variables.get('pemail')",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify whether the partner invitation is displayed in the Profile\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result.invited_partner.email).to.eql(pemail);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.family.get_details&api_key={{api_key}}&auth_token={{auth_token}}&start_timestamp=1511395200&end_timestamp=1511481599",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.family.get_details"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{auth_token}}"
+						},
+						{
+							"key": "start_timestamp",
+							"value": "1511395200",
+							"description": "optional. Send if dashboard count is required"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "1511481599",
+							"description": "optional. Send if dashboard count is required"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5_Add Kid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d1941e96-19d9-4501-9d13-6379df95ac6a",
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Body matches string\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"fabia\");",
+							"});",
+							"",
+							"pm.test(\"Validate the status\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(0);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "profile[gender]",
+							"value": "M",
+							"type": "text"
+						},
+						{
+							"key": "profile[age]",
+							"value": "8",
+							"type": "text"
+						},
+						{
+							"key": "profile[name]",
+							"value": "{{cname}}",
+							"type": "text"
+						},
+						{
+							"key": "profile[pin]",
+							"value": "1236",
+							"type": "text"
+						},
+						{
+							"key": "profile[photo]",
+							"value": "www.findingnemo.com",
+							"type": "text"
+						},
+						{
+							"key": "profile[jar_enabled]",
+							"value": "1",
+							"description": "1 - for enable, 0- Disable",
+							"type": "text"
+						},
+						{
+							"key": "profile[goal_enabled]",
+							"value": "1",
+							"description": "1 - for enable, 0- Disable",
+							"type": "text"
+						},
+						{
+							"key": "profile[reward_enabled]",
+							"value": "1",
+							"description": "1 - for enable, 0- Disable",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "older-kid7-test20@impigertech.com",
+							"description": "Optional; On adding email address ",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "message",
+							"value": "Click the link below to sign up in SmoresUp",
+							"description": "Optional; On adding email address ",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "linkurl",
+							"value": "http://google.com",
+							"description": "Optional; On adding email address ",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "profile[phone]",
+							"value": "88888888",
+							"description": "Optional; Phone number for kid",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.add.kid&api_key={{api_key}}&auth_token={{auth_token}}&family_guid={{fguid}}&profileid={{pguid}}",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.add.kid"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{auth_token}}"
+						},
+						{
+							"key": "family_guid",
+							"value": "{{fguid}}"
+						},
+						{
+							"key": "profileid",
+							"value": "{{pguid}}"
+						}
+					]
+				},
+				"description": "Save Profile"
+			},
+			"response": []
+		},
+		{
+			"name": "6_Get Family",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "143725e0-4ca6-4788-83ba-55a80a2a4016",
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable('fguid',jsonData.result.guid)",
+							"postman.setEnvironmentVariable('pguid',jsonData.result.members[0].guid)",
+							"//var partneremail = jsonData.result.invited_partner",
+							"//postman.setEnvironmentVariable('childname',jsonData.result.members[0].name)",
+							"let cname = pm.variables.get('cname')",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Verify whether the partner invitation is displayed in the Profile\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result.members[0].name).to.eql(cname);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/services/api/rest/json/?method=sp.family.get_details&api_key={{api_key}}&auth_token={{auth_token}}&start_timestamp=1511395200&end_timestamp=1511481599",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"services",
+						"api",
+						"rest",
+						"json",
+						""
+					],
+					"query": [
+						{
+							"key": "method",
+							"value": "sp.family.get_details"
+						},
+						{
+							"key": "api_key",
+							"value": "{{api_key}}"
+						},
+						{
+							"key": "auth_token",
+							"value": "{{auth_token}}"
+						},
+						{
+							"key": "start_timestamp",
+							"value": "1511395200",
+							"description": "optional. Send if dashboard count is required"
+						},
+						{
+							"key": "end_timestamp",
+							"value": "1511481599",
+							"description": "optional. Send if dashboard count is required"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
